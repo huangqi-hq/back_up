@@ -1,0 +1,148 @@
+* [2021-04-02 周五]
+** Done
+1. 阅读了文献《基于火焰图像和卷积稀疏自编码的燃烧工况监测》、《基于火焰成像和堆栈降噪自编码的燃烧工况识别》等文章。
+2. 运行了基础的Autoencoder和Sparse Autoencoder模型。
+** Questions
+1. 所阅读的文章仅对火焰燃烧状态进行简单的定性，未进行定量分析。
+2. 模型所有数据集为mnist手写数字集。
+** Plan
+1. 继续看相关论文。
+2. 把自己的数据集导入到模型中。
+* [2021-01-01 周五]
+** Done
+1. 用MatchNet模型训练了火焰图像数据。
+2. 阅读了文章《 Comparative Evaluation of Hand-Crafted and Learned Local Featuresn》。
+** Questions
+神经网络对火焰图像的提取效果不理想。
+** Plan
+1. 用LSTM网络训练时序数据进行分类。
+2. 阅读其他相关文献。
+* [2020-12-25 周五]
+** Done  
+1. 阅读了文章《MatchNet: Unifying Feature and Metric Learning for Patch-Based Matching》、《Universal Correspondence Network》、《Learned Invariant Feature Transform》。
+2. 用神经网络中的LIFT模型训练火焰图像数据。
+** Questions
+神经网络对火焰图像的提取效果不理想。
+** Plan
+1. 尝试其他的神经网络模型训练火焰数据。
+2. 阅读其他相关文献。
+* [2020-12-18 周五]
+** Done
+1. 训练了师姐的模型。
+2. 用CNN神经网络模型训练火焰图像数据。
+3. 阅读了《Discriminative learning of deep convolutional feature point descriptors》、《Euclidean and Hamming Embedding for image patch description with convolutional networks》、《基于改进AKAZE和RANSAC的全景图像拼接算法研究》。
+** Questions
+1. 师姐VAE编码编码输出的1024维特征向量，目前只打印出来，没有找到更直观的可视化方式。
+2. 神经网络对火焰图像的提取效果不理想（具体看实验报告）。
+** Plan
+1. 尝试其他的神经网络模型训练火焰数据。
+2. 阅读其他相关文献。
+* [2020-12-11 周五]
+** Done
+1. 阅读了文章《基于火焰成像和堆栈降噪自编码的燃烧工况识》。
+2. 跑通师姐的vae模型。
+** Questions
+1. 所用数据为师姐处理过的数据。
+2. 对模型结构不够了解。
+** Plan
+1. 对照师姐论文对模型的描述弄清楚模型结构。
+2. 找用神经网络进行图片拼接的示例。
+3. 阅读其他相关文章。
+* [2020-12-04 周五]
+** Done
+1. 将火焰图像转化为灰度矩阵，确定灰度值的max和min并设置为上下限，然后对其他像素点的灰度值进行线性插值，再输入到SIFT模型中进行训练。输入到模型后仍无法提取到有用信息，提示“Not enough matches are found”。
+2. 将火焰图像进行高斯滤波、增强对比度、灰度值变换、空间域锐化等处理之后，输入到sift模型中训练。具体步骤记录在simulation中。模型提取到的主要为边缘轮廓的特征点，对火焰的边缘仅有非常有限的捕捉。
+3. 将同一张图片先后输入到模型中训练，观察其提取特征点的能力。模型主要抓取图片边缘轮廓的特征点，对火焰的纹理抓取较少。
+4. 阅读文献《基于图像处理的燃气火焰稳定性检测试验研究》
+** Questions
+1. 输入到模型后仍无法提取到有用信息，提示“Not enough matches are found”。
+2. 模型提取到的主要为边缘轮廓的特征点，对火焰的边缘仅有非常有限的捕捉。
+** Plan
+1. 细读文章《基于火焰图像和卷积稀疏自编码的燃烧工况监测》
+2. 研究刘闽建师姐的模型（结合其论文第3、4章）
+3. 继续阅读相关文章
+* [2020-11-27 周五]
+** Done
+1. 将火焰图像转化为灰度图、二值图，输入到SIFT模型中训练
+2. 阅读了文章《王煜伟,田宏伟,秦永新,韩哲哲,许传龙.基于火焰图像和卷积稀疏自编码的燃烧工况监测》
+** Questions
+1. 将灰度化后的火焰图像输入到模型中仍然无法匹配相似点，模型无法提取火焰图像信息
+2. 将火焰图像二值化后数据图像信息丢失
+** Plan
+1. 将火焰图像灰度图进行调整后输入到模型中训练，换火焰更明显的图像数据训练
+2. 细读文章《王煜伟,田宏伟,秦永新,韩哲哲,许传龙.基于火焰图像和卷积稀疏自编码的燃烧工况监测》
+* [2020-11-20 周五]
+** Done
+1. 截取火焰图像仅有火焰图像的部分输入到SIFT模型中进行训练
+2. 阅读师姐的论文
+** Questions
+1. 截取火焰图像仅有火焰图像的部分输入到SIFT模型中进行训练无法提取到相似点，输出结果为“Not enough matches are found”
+2. 师姐的论文中有些地方需要查阅相关资料更仔细的阅读
+** Plan
+1. 将火焰图像转化为灰度图（灰度值设置区分尽量大）
+2. 进一步阅读师姐的文章
+3. 阅读其他相关文章
+* [2020-11-13 周五]
+** Done
+1. 用openCV将火焰视频数据逐帧截取成火焰图像
+2. 将火焰图像输入到之前的SIFT特征提取模型中训练
+** Question
+1. 火焰图像输入到模型中提取到的相似点为图像中“通道二”、时间等文字，不能提取到火焰的信息
+** Plan
+1. 截取火焰图像中仅有火焰的部分放入模型中训练
+2. 阅读师姐论文
+* [2020-11-06 周五]
+** Done
+1. 完成并提交了开题报告和文献综述
+** Question
+无
+** Plan
+1. 处理火焰视频数据
+* <2020-10-23 周五>
+** Done
+1. 阅读《Real-Time Fire Detection Based On Deep Convolutional Long-Recurrent Networks And Optical Flow Method》、《Optical Flow Feature Based for Fire Detection on Video Data》、《高炉内煤粉燃烧速度场的数值模》、《混煤燃烧特性研究及燃烧速度预测》。
+2. 找图片拼接的示例，示例所用为SIFT算法和FLANN函数库。
+** Questions
+1. 阅读文章中没用利用光流法提取图像相似点从而计算扩散速度的应用。
+2. 运行示例代时，错误提示为 ModuleNotFoundError: No module named 'cv2' ，经检查已安装OpenCV和OpenCV-python模块，仍提示相同错误类型，故未能跑通示例代码。
+** Plan
+1. 找SIFT算法示例并跑通。
+2. 截取视频数据的火焰图像。
+3. 修改开题报告中课题研究内容、研究方案及难点、预期成果和可能的创新点，使其更加详细。
+4. 写文献综述。
+* <2020-10-16 周五>
+** Done
+1. 找计算相似点的代码，并运行例子
+2. 阅读《Optical Flow Estimation for Flame Detection in Videos》、《Dynamic Feature-based Fire Detection Using Fusion of Markov Random Field and PCA Optical Flow》、《基于光流动态特征与 SVM 的阴燃火检测方法》、《FIRE AND SMOKE DETECTION IN VIDEO WITH OPTIMAL MASS TRANSPORT BASED OPTICAL FLOW AND NEURAL NETWORKS》、《基于光流法火灾烟雾视频图像识别及多信息融合探测算法研究》
+** questions
+1. 所找计算相似点的示例为计算前后图片的相似性，不符合课题设想中计算图片相似点的应用想法
+2. 阅读文章中没有解决类似问题的文章
+** Plan
+1. 找图片拼接的示例
+2. 找所阅读文章中的开源代码
+* <2020-10-09 周五>
+** Done
+1. 提交开题报告
+** Question
+1. 具体方法未确定
+** Plan
+1. 尽快确定具体方法
+* [2020-09-25 Fri]
+** Done
+1. 阅读《基于特征传播的髙速视頻中物体检测》、《基于特征融合的高准确率视频中物体检测》、《基于递归特征融合与自适应特征提取的高速高准确率视频中物体检测》
+2. 阅读《Deep Feature Flow for Vedio Recognition》, 《Flow-Guided Feature Aggregation for Vedio Object Detection》, 《An Empirical Study of Spatial Attention Mechanisms in Deep Networks》, 《Towards High Performance Vedio Object Detection》
+** Question
+1. 所看文章的方法中所用方法（语义分割及目标检测）运用到课题里较为困难
+** Plan
+1. 阅读检测图像/视频中物体速度的文献
+2. 阅读检测图像/视频前后帧相似点的文献
+* [2019-09-06 Fri]
+** Done
+1. Read "The Promise of Artificial Intelligence in Chemical Engineering: Is It Here, Finally?".
+2. Revise the patent about combustion steady estimation.
+** Quesions
+1. Need new ideas of AI applications for power plants.
+** Plan
+1. Commit the patent about combustion steady estimation.
+2. Check combustion steady monitoring function.
+   
