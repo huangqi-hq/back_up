@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-05-24 周一 20:14 -->
+<!-- 2021-05-25 周二 15:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -254,32 +254,33 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb513e58">1. 绪论</a></li>
-<li><a href="#orged548b0">2. 火检稳定性判别模型原理</a>
+<li><a href="#orgc1b935b">1. 绪论</a></li>
+<li><a href="#org46c17bc">2. 火检稳定性判别模型原理</a>
 <ul>
-<li><a href="#org87ad1b1">2.1. 聚类</a></li>
-<li><a href="#org6fed195">2.2. 层次聚类（HCA）</a></li>
-<li><a href="#orge29599c">2.3. cnn</a></li>
+<li><a href="#orgf3746cd">2.1. 聚类</a></li>
+<li><a href="#org540cb09">2.2. 层次聚类（HCA）</a></li>
+<li><a href="#org6b10a3c">2.3. 卷积神经网络</a></li>
 </ul>
 </li>
-<li><a href="#org4b5aadb">3. 试验装置与数据集构建</a>
+<li><a href="#org3b59a97">3. 试验装置与数据集构建</a>
 <ul>
-<li><a href="#orgae18291">3.1. 实验装置</a></li>
-<li><a href="#orga559c62">3.2. 燃烧调整实验</a></li>
+<li><a href="#orge5b0bdd">3.1. 实验装置</a></li>
+<li><a href="#org8ed9672">3.2. 燃烧调整实验</a></li>
 </ul>
 </li>
-<li><a href="#org1581fb7">4. 实验结果与讨论</a>
+<li><a href="#org02e17e7">4. 实验结果 与讨论</a>
 <ul>
-<li><a href="#orgcecbc53">4.1. 层次聚类结果</a></li>
-<li><a href="#org28ebebd">4.2. 不同的聚类方法对比</a></li>
+<li><a href="#org67959a6">4.1. 层次聚类结果</a></li>
+<li><a href="#org46d7bbd">4.2. 不同的聚类方法对比</a></li>
+<li><a href="#org0fe3915">4.3. cnn</a></li>
 </ul>
 </li>
-<li><a href="#org65b6f28">5. 结论</a></li>
+<li><a href="#org5566f4b">5. 结论</a></li>
 </ul>
 </div>
 </div>
-<div id="outline-container-orgb513e58" class="outline-2">
-<h2 id="orgb513e58"><span class="section-number-2">1</span> 绪论</h2>
+<div id="outline-container-orgc1b935b" class="outline-2">
+<h2 id="orgc1b935b"><span class="section-number-2">1</span> 绪论</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 根据 2020 年我国的电力能源结构及电力行业碳排放占比，以燃煤为主的火电在我国电源构成中占比超过一半，电能的生产绝大部分依靠燃煤发电，且在短期内依然会占据较大的份额。随着高比例可再生能源的利用，燃煤电站锅炉需要在宽负荷下灵活运行，以满足电网深度调峰的要求，这对火力发电机组高效率、低污染排放的运营目标带来了极大挑战。当燃煤锅炉运行中出现燃烧不稳定情况时，不仅会降低能源利用效率，增加污染物排放量，还可能造成热分布不均匀、炉壁热应力增大等问题。因此，有必要对锅炉燃烧状态进行有效监测，以确保锅炉安全稳定运行。
@@ -294,52 +295,37 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-针对以上问题，本文提出了一种基于层次聚类的火检稳定性判别卷积神经网络模型。首先，在 ABB 火检分析单元的应用基础上，使用采集得到的火检中间值，采用不同的聚类方法，得到燃烧状态分类，结合给煤量的变化情况，建立合适的聚类方法用于确定燃烧状态值；然后，使用短时傅里叶变换得到火检中间值的时频图，并建立起了火焰稳定性判别的卷积神经网络（CNN）模型；最后，对给定了状态标签的时频图进行学习，最后验证了该网络对测试数据集的识别情况，取得了较高的准确率。
+针对以上问题，本文提出了一种基于层次聚类的火检稳定性判别卷积神经网络模型。首先，在 ABB 火检分析单元的应用基础上，使用采集得到的火检中间值，结合实际的运行经验及给煤量变化情况将层次聚类树重新作划分，对锅炉炉膛燃烧稳定性进行定性描述；然后，建立起了火焰稳定性判别的卷积神经网络（CNN）模型，由火检中间值进行层次聚类得到的燃烧状态标签作为反应炉膛火焰燃烧状态进行学习，最后验证了该网络对测试数据集的识别情况，取得了较高的准确率。
 </p>
 </div>
 </div>
 
-<div id="outline-container-orged548b0" class="outline-2">
-<h2 id="orged548b0"><span class="section-number-2">2</span> 火检稳定性判别模型原理</h2>
+<div id="outline-container-org46c17bc" class="outline-2">
+<h2 id="org46c17bc"><span class="section-number-2">2</span> 火检稳定性判别模型原理</h2>
 <div class="outline-text-2" id="text-2">
 <p>
-种基于时频分析的火检稳定性判别卷积神经网络模型，原理如图 1 所示，具体包括以下三个阶段：
+基于层次聚类的火检稳定性判别卷积神经网络模型，原理如图 1 所示，具体包括以下三个阶段：
 </p>
 
 <p>
-阶段1：（数据采集和预处理）
+阶段1：（数据采集）
 阶段2：（层次聚类）
 阶段3：（卷积神经网络）
 </p>
 </div>
 
 
-<div id="outline-container-org87ad1b1" class="outline-3">
-<h3 id="org87ad1b1"><span class="section-number-3">2.1</span> 聚类</h3>
+<div id="outline-container-orgf3746cd" class="outline-3">
+<h3 id="orgf3746cd"><span class="section-number-3">2.1</span> 聚类</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
-聚类是无监督学习的一种，它的概念是将相似的对象归到同一个类中，使得属于同一个类内的数据对象之间相似性尽可能大，同时保证不在同类中的数据对象之间差异性也尽可能地大。对于现场火检数据来说，在对燃烧状态变化过程不完全了解的情况下，要实现通过某种方法将状态尚不明确的样本进行不同状态的划分，就需要从获得的实际火焰检测数据归纳出一个合适的分类依据。
-</p>
-
-<p>
-K-Means
-</p>
-
-<p>
-DBSCAN(具有噪声的基于密度的聚类方法)
-</p>
-
-<p>
-BIRCH(利用层次方法的平衡迭代规约和聚类)
-</p>
-
-<p>
-HCA(层次聚类)
+聚类是无监督学习的一种，它的概念是将相似的对象归到同一个类中，使得属于同一个类内的数据对象之间相似性尽可能大，同时保证不在同类中的数据对象之间差异性也尽可能地大。聚类同分类的根本区别在于分类是需要事先知道所依据的数据特征，而聚类是要找到这个数据特征，因此，在很多应用中，聚类分析作为一种数据预处理过程，是进一步分析和处理数据的基础。对于现场火检数据来说，在对燃烧状态变化过程不完全了解的情况下，要实现通过某种方法将状态尚不明确的样本进行不同状态的划分，就需要从获得的实际火焰检测数据归纳出一个合适的分类依据。
+然而，对于典型的 K-Means 聚类、DBSCAN 密度聚类等方法来说，当分类数目具有实际运行意义时，很难得到新分离的状态之间明确的界限，或是新分离的状态之间的不连续跳变，不很好的保证各个燃烧状态内部相似度高、而燃烧状态间相似度低的聚类标准。而层次聚类本身是通过划分聚类树来获得不同的分类数的，此每增加一类划分数目都可以通过比较之前的划分情况找出新的划分之前的类，且可以根据实际的运行背景，对类别的划分进行调整。
 </p>
 </div>
 </div>
-<div id="outline-container-org6fed195" class="outline-3">
-<h3 id="org6fed195"><span class="section-number-3">2.2</span> 层次聚类（HCA）</h3>
+<div id="outline-container-org540cb09" class="outline-3">
+<h3 id="org540cb09"><span class="section-number-3">2.2</span> 层次聚类（HCA）</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 层次聚类（Hierarchical Cluster Analysis, HCA） 是根据给定的簇间距离度量准则，构造和维护一棵由簇和子簇形成的聚类树，直至满足某个终结条件为止，即通过比较火检中间值向量之间的距离，并依靠距离大小关系构建一棵状态划分树。其次层次聚类的结果一般保存为一个可链接的矩阵，可以通过这个链接矩阵将聚类的结果表示成聚类树的形式，在聚类树中可以清楚的显示不同类别按照某种距离度量的划分过程。
@@ -374,18 +360,72 @@ HCA(层次聚类)
 </p>
 </div>
 </div>
-<div id="outline-container-orge29599c" class="outline-3">
-<h3 id="orge29599c"><span class="section-number-3">2.3</span> cnn</h3>
-</div>
+<div id="outline-container-org6b10a3c" class="outline-3">
+<h3 id="org6b10a3c"><span class="section-number-3">2.3</span> 卷积神经网络</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+在深层神经网络中，卷积神经网络（CNN）是被应用最为广泛的网络结构，它的局部连接、权值共享及池化操作等特性，相比于其它一些深层网络模型来说可以显著的降低网络中参数的数量，使模型的复杂性降低。对于视觉图像这类原始数据中，有些特征无法通过人的认知明显加以区分，通常使用卷积神经网络来对其进行分析。卷积神经网络由输入层和输出层及隐藏层组成。卷积神经网络的隐藏层由卷积层、池化层、全连接层三个部分构成。卷积神经网络的结构如图 4-5 所示。
+</p>
+
+<div class="figure">
+<p><img src="./img/hca_cnn/thesis/cnn.png" alt="cnn.png" />
+</p>
+<p><span class="figure-number">Figure 1: </span>网络结构示意图</p>
 </div>
 
+<p>
+卷积神经网络由两层卷积层及三层全连接层构成，网络的具体参数见表 4-3。
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> 卷积神经网络各层参数</caption>
 
-<div id="outline-container-org4b5aadb" class="outline-2">
-<h2 id="org4b5aadb"><span class="section-number-2">3</span> 试验装置与数据集构建</h2>
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">网络各层</th>
+<th scope="col" class="org-left">参数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">(conv1)</td>
+<td class="org-left">Conv2d(3, 32,kernelsize=(3,2), stride=(2,2), padding=(0,1))</td>
+</tr>
+
+<tr>
+<td class="org-left">(conv2)</td>
+<td class="org-left">Conv2d(32, 64, kernelsize=(2,2), stride=(2,1), padding=(0,1))</td>
+</tr>
+
+<tr>
+<td class="org-left">(fc1)</td>
+<td class="org-left">Linear(infeatures=512, outfeatures=200, bias=True)</td>
+</tr>
+
+<tr>
+<td class="org-left">(fc2)</td>
+<td class="org-left">Linear(infeatures=200, outfeatures=50, bias=True)</td>
+</tr>
+
+<tr>
+<td class="org-left">(fc3)</td>
+<td class="org-left">Linear(infeatures=50, outfeatures=3, bias=True)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="outline-container-org3b59a97" class="outline-2">
+<h2 id="org3b59a97"><span class="section-number-2">3</span> 试验装置与数据集构建</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-orgae18291" class="outline-3">
-<h3 id="orgae18291"><span class="section-number-3">3.1</span> 实验装置</h3>
+<div id="outline-container-orge5b0bdd" class="outline-3">
+<h3 id="orge5b0bdd"><span class="section-number-3">3.1</span> 实验装置</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 为方便采集煤粉燃烧过程的相关参数，本文设计了一套煤粉燃烧过程数据采集系统，并在某 660MW 前后墙对冲锅炉上进行了安装。该煤粉燃烧调整实验的数据采集系统主要包括 ABB 公司火检探头 SF810、火检分析单元 FAU810 以及MOXA 交换机和 PC。5 只 SF810 火检探头安装在锅炉炉膛 F 层 5 只燃烧器附近，并通过双绞线将火检信号传送给位于电子间的火检分析单元 FAU810，所有的火检中间值信号由计算机通过 MODBUS 协议经交换机实时并行采集。数据采集系统具体连接如图 2-1 所示。
@@ -395,7 +435,7 @@ HCA(层次聚类)
 <div class="figure">
 <p><img src="./img/hca_cnn/thesis/data_collection_systems.png" alt="data_collection_systems.png" />
 </p>
-<p><span class="figure-number">Figure 1: </span>数据采集系统示意图</p>
+<p><span class="figure-number">Figure 2: </span>数据采集系统示意图</p>
 </div>
 
 <p>
@@ -403,15 +443,15 @@ HCA(层次聚类)
 </p>
 </div>
 </div>
-<div id="outline-container-orga559c62" class="outline-3">
-<h3 id="orga559c62"><span class="section-number-3">3.2</span> 燃烧调整实验</h3>
+<div id="outline-container-org8ed9672" class="outline-3">
+<h3 id="org8ed9672"><span class="section-number-3">3.2</span> 燃烧调整实验</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 为了研究煤粉燃烧火焰稳定性，在某 660MW 机组的前后墙对冲锅炉 F 层燃烧器进行了燃烧调整实验，采集了实验前后八个小时（2018 年 9 月 9 日 9:00 至 17:00）的火检数据（对应 F 层 1-5 号燃烧器）和给煤量数据。在该过程中同步采集 5 只燃烧器火检中间值及给煤量变化情况。煤粉燃烧调整实验中采集的 3 号火检探头的部分火检中间值数据如表 2-1 所示。
 以每秒 10 次的频率采集炉膛火检中间值信号，包括火焰的燃烧强度、闪烁频率和 AC-振幅三个中间变量和燃烧稳定性指标值。其中，燃烧稳定性指标值由 ABB 公司提供的火检分析单元（FAU810）依据三个中间变量计算得出。同时，采集该实验过程中给煤量变化的情况，时间间隔为 1 秒。故每秒内，火检中间值取 10 次，给煤量取 1 次。选取实验数据的时间区间为 13:00~16:00，共 3 个小时。
 </p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<caption class="t-above"><span class="table-number">Table 1:</span> 电厂 1 号机组 F 层 3 号燃烧器火检中间值</caption>
+<caption class="t-above"><span class="table-number">Table 2:</span> 电厂 1 号机组 F 层 3 号燃烧器火检中间值</caption>
 
 <colgroup>
 <col  class="org-left" />
@@ -500,62 +540,204 @@ HCA(层次聚类)
 <div class="figure">
 <p><img src="./img/hca_cnn/thesis/median.png" alt="median.png" />
 </p>
-<p><span class="figure-number">Figure 2: </span>13:00-16:00 燃烧中间值及燃烧指标</p>
+<p><span class="figure-number">Figure 3: </span>13:00-16:00 燃烧中间值及燃烧指标</p>
 </div>
 
 
 <div class="figure">
 <p><img src="./img/hca_cnn/thesis/coal_feed.png" alt="coal_feed.png" />
 </p>
-<p><span class="figure-number">Figure 3: </span>13:00-16:00 给煤量变化图</p>
+<p><span class="figure-number">Figure 4: </span>13:00-16:00 给煤量变化图</p>
 </div>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org1581fb7" class="outline-2">
-<h2 id="org1581fb7"><span class="section-number-2">4</span> 实验结果与讨论</h2>
+<div id="outline-container-org02e17e7" class="outline-2">
+<h2 id="org02e17e7"><span class="section-number-2">4</span> 实验结果 与讨论</h2>
 <div class="outline-text-2" id="text-4">
 </div>
-<div id="outline-container-orgcecbc53" class="outline-3">
-<h3 id="orgcecbc53"><span class="section-number-3">4.1</span> 层次聚类结果</h3>
+<div id="outline-container-org67959a6" class="outline-3">
+<h3 id="org67959a6"><span class="section-number-3">4.1</span> 层次聚类结果</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
-本实验中将采用层次聚类中自下而上聚合的方式（AGNES），各类之间的距离计算采用类平均法，对三个火检中间值利用层次聚类得到聚类树，通过将聚类树做不同的划分，将燃烧状态分为指定的任意多类别。如图 3-4 所示是将燃烧中间值经行层次聚类得到的聚类树。该聚类树表示了在凝聚层次聚类过程中，将最后的 10 类合并到 1 类的过程，其中横坐标标表示各个类中样本数量，纵坐标表示的是聚合过程中不同类之间的欧式距离。
+本实验中将采用层次聚类中自下而上聚合的方式（AGNES），各类之间的距离计算采用类平均法，对三个火检中间值利用层次聚类得到聚类树，通过将聚类树做不同的划分，将燃烧状态分为指定的任意多类别。
+如图 3-4 所示是将燃烧中间值经行层次聚类得到的聚类树。该聚类树表示了在凝聚层次聚类过程中，将最后的 10 类合并到 1 类的过程，其中横坐标标表示各个类中样本数量，纵坐标表示的是聚合过程中不同类之间的欧式距离。
 </p>
 </div>
 </div>
 
 
-<div id="outline-container-org28ebebd" class="outline-3">
-<h3 id="org28ebebd"><span class="section-number-3">4.2</span> 不同的聚类方法对比</h3>
+
+<div id="outline-container-org46d7bbd" class="outline-3">
+<h3 id="org46d7bbd"><span class="section-number-3">4.2</span> 不同的聚类方法对比</h3>
 <div class="outline-text-3" id="text-4-2">
 <ol class="org-ol">
-<li>聚类性能指标</li>
-</ol>
-<p>
+<li><p>
+聚类性能指标
 对于聚类的结果，通常需要某种性能度量来评估其好坏。聚类性能度量大致有两类：一类是将聚类结果与某个“参考模型”进行比较，称为“外部指标”；一类是在不考虑其它因素的影响，单单只是从火检中间值向量集本身，直接考察聚类结果的好坏，这种评价方式不需要利用参考模型，称为“内部指标”。聚类的目的是使得不同状态类别之间差别（距离）要尽可能的大，同一状态类别内部之间的差别要尽可能小。因此引入轮廓系数（Silhouette Coefficient）和 CH 系数（Calinski-Harabasz Index）的概念。
+</p>
+
+<p>
 在火检中间值向量中，根据某个样本 𝑖 的类内不相似度 𝑎<sub>i</sub> 和类间不相似度 𝑏<sub>i</sub> ，定义样本 𝑖 的轮廓系数为：
 </p>
 
 <p>
-\[s(i)=\frac{b_i-a_i}{max{a<sub>i,b</sub><sub>i</sub>}}]
+\[s(i)=\frac{b_i-a_i}{max{a_i,b_i}}\]
 </p>
 
 <p>
+\[s(i)=\begin{cases}
+   1-\frac{a_i}{b_i},\quad a_i<b_i\\
+   0,\quad a_i=b_i\\
+   \frac{b_i}{a_i}-1,\quad a_i>b_i
+   \end{cases} \]
+</p>
+
+<p>
+由上两式可知，轮廓系数 𝑠<sub>i</sub> 的值介于 [-1,1] 之间，且越接近于 1 说明状态与状态之间距离越远；越接近于 0 说明各个状态之间没有明确的区分；越接近于 -1 说明燃烧的状态划分混合到了一起。
+</p>
+
+<p>
+CH 指标由计算出的分离度比上紧密度得到，定义如下：
+</p>
+
+<p>
+\[CH=\frac{Tr(S_B)}{Tr(S_W)}*\frac{n-K}{K-1}\]
+</p>
+
+<p>
+式中，𝑛 表示聚类的燃烧状态的数目，𝑘 表示当前的燃烧状态，𝑇𝑟(𝑆<sub>B</sub>) 表示同一燃烧状态离差矩阵的迹，𝑇𝑟(𝑆<sub>W</sub>) 表示不同燃烧状态间离差矩阵的迹。
+</p>
+
+<p>
+由上式可知，当 CH 指标越大时，表示着各个燃烧状态自身内部之间彼此靠近的越紧密，不同燃烧状态之间彼此远离的越远，代表着更好的燃烧状态划分。
+</p></li>
+
+<li><p>
+不同的聚类方法的轮廓系数及 CH 指标
 表 3-6 给出了不同聚类方法对火检中间值信号进行聚类划分，得到的不同燃烧状态类别数目下的轮廓系数及 CH 系数，结果对比如图 3-10 所示。
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> 不同聚类方法的轮廓系数和 CH 分数</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">聚类数目</th>
+<th scope="col" class="org-right">2</th>
+<th scope="col" class="org-right">3</th>
+<th scope="col" class="org-right">4</th>
+<th scope="col" class="org-right">5</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">K-Means SH</td>
+<td class="org-right">0.567</td>
+<td class="org-right">0.186</td>
+<td class="org-right">0.161</td>
+<td class="org-right">0.152</td>
+</tr>
+
+<tr>
+<td class="org-left">DBSCAN SH</td>
+<td class="org-right">0.430</td>
+<td class="org-right">0.374</td>
+<td class="org-right">0.306</td>
+<td class="org-right">0.307</td>
+</tr>
+
+<tr>
+<td class="org-left">BIRCH SH</td>
+<td class="org-right">0.553</td>
+<td class="org-right">0.174</td>
+<td class="org-right">0.129</td>
+<td class="org-right">0.125</td>
+</tr>
+
+<tr>
+<td class="org-left">HCA SH</td>
+<td class="org-right">0.546</td>
+<td class="org-right">0.163</td>
+<td class="org-right">0.159</td>
+<td class="org-right">0.106</td>
+</tr>
+
+<tr>
+<td class="org-left">K-Means CH</td>
+<td class="org-right">7546</td>
+<td class="org-right">5168</td>
+<td class="org-right">4173</td>
+<td class="org-right">3493</td>
+</tr>
+
+<tr>
+<td class="org-left">DBSCAN CH</td>
+<td class="org-right">3503</td>
+<td class="org-right">1657</td>
+<td class="org-right">830</td>
+<td class="org-right">697</td>
+</tr>
+
+<tr>
+<td class="org-left">BIRCH CH</td>
+<td class="org-right">7147</td>
+<td class="org-right">4517</td>
+<td class="org-right">3527</td>
+<td class="org-right">3025</td>
+</tr>
+
+<tr>
+<td class="org-left">HCA CH</td>
+<td class="org-right">7270</td>
+<td class="org-right">4605</td>
+<td class="org-right">3645</td>
+<td class="org-right">3145</td>
+</tr>
+</tbody>
+</table>
+
+
+<div class="figure">
+<p><img src="./img/hca_cnn/flame/several_clusters.png" alt="several_clusters.png" />
+</p>
+<p><span class="figure-number">Figure 5: </span>不同聚类方法比较</p>
+</div>
+
+<p>
+由图 3-10 可以看出，采用不同的聚类方法对于火检值运用聚类分析，当分类数目由 2 升高到 5 时，所有的方法轮廓系数及 SH 系数都呈下降趋势。对于给定的火检中间值来说，密度聚类（DBSCAN）方法的结果相较于其它方法来说两个评价指标的值都不高；K-Means 方法在划分非灭火状态时，各类标签之间发生严重的状态跳变，使得火焰燃烧状态不连续；BIRCH 方法在类数目由 3 增至 5 时，所划分出来的各个状态之间并不能很好的区分，且发生跳变问题。故以上方法不能作为判定炉膛豁然燃烧稳定性的聚类方法。
+由层次聚类方法划分聚类树得到的燃烧状态标签分析可得出，虽然在划分数目增加时，有些状态的重新划分导致了前面提到的状态标签跳变的情况，但是可以通过聚类树简单的找到产生问题的划分，并通过结合实际运行经验重新对燃烧状态进行划分，最后使得聚类的标签之间不仅具有良好分辨性，而且能很好的反映实际工况下给煤量的变化情况，因此选用层次聚类算法作为判定炉膛火焰燃烧的聚类方法是可行的。
+</p></li>
+</ol>
+</div>
+</div>
+<div id="outline-container-org0fe3915" class="outline-3">
+<h3 id="org0fe3915"><span class="section-number-3">4.3</span> cnn</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+首先，在不考虑样本中各种燃烧状态数量不平衡对神经网络训练的影响下，利用训练集样本对神经网络可学习参数进行训练。在进行 200 轮训练后保存模型及参数，之后固定模型参数，将测试集样本输入到网络中，得到网络输出值，计算与实际标签值之间的准确率。同时画出对应的混淆矩阵，结果如图 4-7 所示。
 </p>
 </div>
 </div>
 </div>
 
-
-<div id="outline-container-org65b6f28" class="outline-2">
-<h2 id="org65b6f28"><span class="section-number-2">5</span> 结论</h2>
+<div id="outline-container-org5566f4b" class="outline-2">
+<h2 id="org5566f4b"><span class="section-number-2">5</span> 结论</h2>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2021-05-24 周一 20:14</p>
+<p class="date">Created: 2021-05-25 周二 15:24</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
